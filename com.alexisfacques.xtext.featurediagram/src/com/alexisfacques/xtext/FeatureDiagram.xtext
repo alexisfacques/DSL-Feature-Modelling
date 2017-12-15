@@ -1,0 +1,36 @@
+grammar com.alexisfacques.xtext.FeatureDiagram with org.eclipse.xtext.common.Terminals
+
+generate featureDiagram "http://www.alexisfacques.com/xtext/FeatureDiagram"
+
+FeatureDiagramModel: declarations+=Declaration*;
+	
+Declaration: Constraint|Feature;
+
+Constraint:
+	'constraint' (description=STRING)?
+		'when' (notWhen?='not'|'!')? when=[Feature|QualifiedName]
+		'then' (notThen?='not'|'!')? then=[Feature|QualifiedName]
+;
+
+Feature:
+	'feature' name=ID ('as' id=INT)?
+		('{'
+			children+=FeatureDefinition (',' children+=FeatureDefinition)*
+		'}')?
+;
+
+QualifiedName: ID ('.' ID)*;
+
+FeatureDefinition: ExtendedFeature|FeatureGroup;
+
+ExtendedFeature: (isOptional?='optional'|'mandatory')? feature=Feature;
+
+FeatureGroup:
+	(isExclusive?='one'|'some') 'of'
+		('{'
+			children+=Feature (',' children+=Feature)*
+		'}')
+;
+
+
+	
