@@ -13,8 +13,25 @@ import java.util.ArrayList
 import com.google.common.collect.Maps
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.alexisfacques.xtext.featureDiagram.FeatureDiagramModel
+import java.util.List
+import com.alexisfacques.xtext.featureDiagram.Declaration
 
 class FeatureDiagramToJSON {
+	static def String toJSON(FeatureDiagramModel featureDiagram) {
+		// Model transformation		
+		var List<HashMap<Object,Object>> ret = new ArrayList<HashMap<Object,Object>>();
+		
+		for (Declaration declaration : featureDiagram.declarations) {
+			if (declaration instanceof Feature) {
+				ret.add(map(declaration));
+			}
+		}
+
+		var Gson gson = new GsonBuilder().disableHtmlEscaping().create();		
+		return gson.toJson(ret);
+	}
+	
 	static def String toJSON(Feature feature) {	
 		var Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 		return gson.toJson(map(feature));

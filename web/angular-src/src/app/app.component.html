@@ -1,0 +1,21 @@
+
+<div class="app-holder">
+    <ul class="feature_model" checkbox-group [(ngModel)]="selected">
+        <ng-template #recursiveList let-list>
+            <li class="feature" *ngFor="let item of list">
+                <checkbox [identifier]="item.id" [ngModel]="getCurrentValue(item.id)" [isLocked]="isLocked(item.id)"></checkbox>
+                <p class="inline">{{item.name}}</p>
+
+                <ul class="feature_children" *ngIf="item.children.length > 0 && getCurrentValue(item.id) == 1">
+                    <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: item.children }"></ng-container>
+                </ul>
+            </li>
+        </ng-template>
+
+        <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: list }"></ng-container>
+    </ul>
+
+    <button class="reset-button" (click)="resetForm()">Reset</button>
+
+    <!--<div class="loading-cache"><p>Loading...</p></div>-->
+<div>

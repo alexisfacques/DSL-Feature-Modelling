@@ -66,6 +66,10 @@ class FeatureDiagramToCNF {
 		// Stingified CNF clauses.
 		var String cnfClauses = toCNF(featureDiagram);
 				
+		// Printing JSON structure.
+		var json = FeatureDiagramToJSON.toJSON(featureDiagram);
+		System.out.println(json);
+		
 		// Serializing
 		saveFeatureDiagram(URI.createURI("serialized.diagram"), featureDiagram);
 		writeToFile(output,cnfClauses);
@@ -82,10 +86,6 @@ class FeatureDiagramToCNF {
 			if (declaration instanceof Feature) {
 				// Populating feature ids.
 				populateIds(declaration);
-				
-				// Printing JSON structure.
-				var json = FeatureDiagramToJSON.toJSON(declaration);
-				System.out.println(json);
 								
 				// Relational clauses are the expression of Child-Parent relations in boolean algebra.
 				var List<Clause> relational = getChildParentClauses(declaration, declaration);				
@@ -118,9 +118,7 @@ class FeatureDiagramToCNF {
 	 */
 	static var i = 1;
 	private static def void populateIds(Feature feature) {
-		feature.id = i++;
-		System.out.println(feature.name + " as " + feature.id);
-		
+		feature.id = i++;		
 		if(feature.children.length == 0) return;
 		
 		feature.children.forEach[definition | {

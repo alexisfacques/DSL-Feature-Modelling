@@ -1,0 +1,28 @@
+:host {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+
+    margin-right: 5px;
+
+    width: 20px;
+    height: 20px;
+
+    background-color: gray;
+
+    cursor: pointer;
+
+    border-radius: 2px;
+}
+
+:host(.is-selected) {
+    background-color: green;
+}
+
+:host(.is-deselected) {
+    background-color: red;
+}
+
+:host(.disabled) {
+    cursor: auto;
+}

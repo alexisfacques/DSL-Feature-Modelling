@@ -33,18 +33,20 @@ public class Sat4JSolver {
 				   			getAllModels(args[1]);
 		 	   			}
 			   			break;
-		 	   		case "core":
-		 	   			getCoreOrDeadlock(args[1],true);
-		 	   			break;
-		 	   		case "dead":
-		 	   			getCoreOrDeadlock(args[1],false);
-		 	   			break;
 		 	   		case "satisfy":
 		 	   			if(args.length > 2) {
 		 	   				getSatisfiability(args[1], args[2].split(","));
 		 	   			}
 		 	   			else {
 			 	   			getSatisfiability(args[1]);
+		 	   			}
+		 	   			break;
+		 	   		case "locked":
+		 	   			if(args.length > 2) {
+		 	   				getLockedFeatures(args[1], args[2].split(","));
+		 	   			}
+		 	   			else {
+		 	   				getLockedFeatures(args[1]);
 		 	   			}
 		 	   			break;
 		 	   		default:
@@ -54,125 +56,120 @@ public class Sat4JSolver {
 			 	long durationMs = (endTime - startTime) / 1000000;
 
 			 	System.out.println("Execution time : " + Long.toString(durationMs) + "ms" );
-		    	} catch(Exception e){
-		    		if(e instanceof ArrayIndexOutOfBoundsException) {
-			    		System.err.println("Missing arguments");
-		    		}
+		    	} catch(ArrayIndexOutOfBoundsException e){
+			    	System.err.println("Missing arguments");
+		    	} catch (ContradictionException e) {
+		    		System.out.println ("Unsatisfiable");
+		    	} catch (TimeoutException e) {
+		    		System.err.println ("Timeout");
+		    	} catch(FileNotFoundException e) {
+		    		System.err.println("Input file not found");
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
 		    	}
     }
-    
-    private static void getAllModels(String input) {
+
+    private static void getAllModels(String input) throws ParseFormatException, IOException, ContradictionException, TimeoutException {
     		getAllModels(input, new String[0]);
     }
 
-    private static void getSatisfiability(String input) {
+    private static void getSatisfiability(String input) throws ParseFormatException, IOException, ContradictionException, TimeoutException {
     		getSatisfiability(input, new String[0]);
     	}
-
-    private static void getAllModels(String input, String[] assumps) {
+   
+    private static void getLockedFeatures(String input) throws TimeoutException, ParseFormatException, IOException, ContradictionException {
+    		getLockedFeatures(input, new String[0]);
+    }
+  
+    private static void getAllModels(String input, String[] assumps) throws ParseFormatException, IOException, ContradictionException, TimeoutException {
         ISolver solver = SolverFactory.newDefault();
         ModelIterator mi = new ModelIterator(solver);
-        solver.setTimeout(3600); // 1 hour timeout
+        solver.setTimeout(3600);
         Reader reader = new InstanceReader(mi);
+        	
+        IVecInt assumptions = new VecInt(Arrays.stream(assumps).mapToInt(Integer::parseInt).toArray());
 
-        try {
-        		IVecInt assumptions = new VecInt(Arrays.stream(assumps).mapToInt(Integer::parseInt).toArray());
-
-            boolean unsat = true;
-            IProblem problem = reader.parseInstance(input);
-            while (problem.isSatisfiable(assumptions)) {
-            		unsat = false;
-            		int [] model = problem.model();
-   				System.out.println(Arrays.stream(model)
-   				        .mapToObj(String::valueOf)
-   				        .collect(Collectors.joining(",")));
-            }
-            if (unsat) {
-            		System.err.println("Unsatisfiable");
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (ParseFormatException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ContradictionException e) {
-            System.err.println("Unsatisfiable");
-        } catch (TimeoutException e) {
-            System.err.println("Timeout");
+        boolean unSatisfied = true;
+        IProblem problem = reader.parseInstance(input);
+        
+        while (problem.isSatisfiable(assumptions)) {
+        		unSatisfied = false;
+        		int[] model = problem.model();
+        		
+			System.out.println(Arrays.stream(model)
+			        .mapToObj(String::valueOf)
+			        .collect(Collectors.joining(",")));
+        }
+        if (unSatisfied) {
+        		System.err.println("Unsatisfiable");
         }
     }
     
-    private static void getSatisfiability(String input, String[] assumps) {
+    private static void getSatisfiability(String input, String[] assumps) throws ParseFormatException, IOException, ContradictionException, TimeoutException {
 	    	ISolver solver = SolverFactory.newDefault();
-	    	solver.setTimeout(3600); // 1 hour timeout
-	    	
+	    	solver.setTimeout(3600);
 	    	Reader reader = new DimacsReader(solver);
-	    	try {
-	    		IVecInt assumptions = new VecInt(Arrays.stream(assumps).mapToInt(Integer::parseInt).toArray());
+	    	
+	    	IVecInt assumptions = new VecInt(Arrays.stream(assumps).mapToInt(Integer::parseInt).toArray());
 	    		
-	    		IProblem problem = reader.parseInstance(input);
-	    		if (problem.isSatisfiable(assumptions)) {
-	    			System.out.println("Satisfiable");
-	    		}
-	    		else {
-	    			System.out.println("Unsatisfiable");
-	    		}
-	    	} catch (FileNotFoundException e) {
-	    		e.printStackTrace();
-	    	} catch (ParseFormatException e) {
-	        e.printStackTrace();
-	    	} catch (IOException e) {
-	        e.printStackTrace();
-	    	} catch (ContradictionException e) {
-	    		System.out.println ("Unsatisfiable");
-	    	} catch ( TimeoutException e) {
-	    		System.err.println ("Timeout");
+	    	IProblem problem = reader.parseInstance(input);
+	    	
+	    	if (problem.isSatisfiable(assumptions)) {
+	    		System.out.println("Satisfiable");
+	    	}
+	    	else {
+	    		System.out.println("Unsatisfiable");
 	    	}
     }
     
-    private static void getCoreOrDeadlock(String input, boolean core) {
-    		ISolver solver = SolverFactory.newDefault();
-    		solver.setTimeout(3600); // 1 hour timeout
-    	
-    		Reader reader = new DimacsReader(solver);
-	    	try {
-	    		List<String> res = new ArrayList<String>();
-	    		
-	    		IProblem problem = reader.parseInstance(input);
-	    		
-	    		if (problem.isSatisfiable()) {
-    			    int[] var = new int[1];
-	    			for(int i = 1; i <= problem.nVars(); i++) {
-	    			    if(core) {
-	    			    		var[0] = -i;
-	    			    }
-	    			    else {
-	    			    		var[0] = i;
-	    			    }
-	    			    
-	    				IVecInt assump = new VecInt(var);
-	    				
-	    		        if (!solver.isSatisfiable(assump)) {
-	    		            res.add(Integer.toString(i));
-	    		        }
-	    			}
-	    			
-   				System.out.println(String.join(",", res));
-	    		}
-	    		else {
-	    			System.err.println("Unsatisfiable");
-	    		}
-	    	} catch (FileNotFoundException e) {
-	    		e.printStackTrace();
-	    	} catch (ParseFormatException e) {
-	        e.printStackTrace();
-	    	} catch (IOException e) {
-	        e.printStackTrace();
-	    	} catch (ContradictionException e) {
-	    		System.err.println ("Unsatisfiable");
-	    	} catch ( TimeoutException e) {
-	    		System.err.println ("Timeout");
-	    	}
+    private static void getLockedFeatures(String input, String[] assumps) throws TimeoutException, ParseFormatException, IOException, ContradictionException {
+		ISolver solver = SolverFactory.newDefault();
+		solver.setTimeout(3600);
+		Reader reader = new DimacsReader(solver);
+	    	IProblem problem = reader.parseInstance(input);
+	    	IVecInt assumptions = new VecInt(Arrays.stream(assumps).mapToInt(Integer::parseInt).toArray());
+	    	
+	    	List<String> res = new ArrayList<String>();
+	    	
+    		if (problem.isSatisfiable(assumptions)) {
+    	    		for(int i = 1; i <= problem.nVars(); i++) {
+    	    			int isLocked = _isLockedFeature(problem,assumptions,i);
+    	    			if(isLocked != 0) res.add(Integer.toString(isLocked * i));
+   			}
+    	    		
+    	    		System.out.println(String.join(",", res));
+    		}
+    		else {
+    			System.err.println("Unsatisfiable");
+    		}
     }
+ 
+    private static int _isLockedFeature(IProblem problem, IVecInt assumptions, int val) throws TimeoutException {
+		int ret = 0;
+		if(_isCoreFeature(problem,assumptions,val)) ret++;
+		if(_isDeadlockFeature(problem,assumptions,val)) ret--;
+		return ret;
+    }
+    
+    private static boolean _isDeadlockFeature(IProblem problem, IVecInt asms, int val) throws TimeoutException {
+    		if(asms.contains(val)) return false;
+    		
+    	
+    		IVecInt assumptions = new VecInt();
+    		asms.copyTo(assumptions);
+    		assumptions.insertFirst(val);
+    		
+		return !problem.isSatisfiable(assumptions);
+    }
+    
+    private static boolean _isCoreFeature(IProblem problem, IVecInt asms, int val) throws TimeoutException {
+		if(asms.contains(-val)) return false;
+
+		IVecInt assumptions = new VecInt();
+		asms.copyTo(assumptions);
+		assumptions.insertFirst(-val);
+	
+		return !problem.isSatisfiable(assumptions);
+    }
+ 
 }

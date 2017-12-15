@@ -1,0 +1,51 @@
+.app-holder {
+    display: inline-block;
+    min-width: 50%;
+    background-color: #FFF;
+    text-align: left;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    padding: 5px;
+
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.reset-button {
+    text-align: center;
+    padding: 10px 20px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.loading-cache {
+    background-color: rgba(2,119,189,.9);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    text-align: center;
+
+    display: none;
+}
+
+:host(.loading) .loading-cache{
+    display: block;
+}
+
+
+.loading-cache p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+    color: #FFF;
+    font-size: 20px;
+}
