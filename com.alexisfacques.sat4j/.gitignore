@@ -1,0 +1,17 @@
+# ALL
+*
+
+# BUT THESE FILES
+!.gitignore
+!/src/*
+!/lib/*
+
+# SYSTEM FILES
+*.swp
+*.swo
+*.log
+*.DS_Store
+.tmp
+.sass-cache
+.git
+.metadata
