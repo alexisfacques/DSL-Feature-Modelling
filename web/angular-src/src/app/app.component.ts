@@ -44,6 +44,7 @@ export class AppComponent extends Unsubscribe {
         this.featureModelService.lockedFeatures$
             .takeUntil(this.ngUnsubscribe)
             .subscribe( (locked: Array<number>) => {
+                console.log(locked);
                 this.locked = locked;
             });
 

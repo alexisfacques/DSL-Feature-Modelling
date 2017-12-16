@@ -4,26 +4,43 @@ import com.alexisfacques.xtext.featureDiagram.ExtendedFeature
 import com.alexisfacques.xtext.featureDiagram.Feature
 import com.alexisfacques.xtext.featureDiagram.FeatureDefinition
 import com.alexisfacques.xtext.featureDiagram.FeatureGroup
+import com.alexisfacques.xtext.featureDiagram.FeatureDiagramModel
+import com.alexisfacques.xtext.featureDiagram.Declaration
 
 import org.eclipse.emf.common.util.EList
+import org.eclipse.emf.common.util.URI
 
 import java.util.HashMap
 import java.util.ArrayList
+import java.util.List
 
 import com.google.common.collect.Maps
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.alexisfacques.xtext.featureDiagram.FeatureDiagramModel
-import java.util.List
-import com.alexisfacques.xtext.featureDiagram.Declaration
 
-class FeatureDiagramToJSON {
+class FeatureDiagramToJSON extends FeatureDiagramUtils {
+	static def void transform(String input, String output) {
+		// Loading the feature diagram model.
+		var FeatureDiagramModel featureDiagram = loadFeatureDiagram(URI.createURI(input))		
+
+		// Populating features with an id.
+		populateIds(featureDiagram);
+
+		// Model transformation
+		var String json = toJSON(featureDiagram);
+		
+		// Serializing
+		saveFeatureDiagram(URI.createURI("serialized.diagram"), featureDiagram);
+		writeToFile(output,json);
+	}	
+
+	
 	static def String toJSON(FeatureDiagramModel featureDiagram) {
 		// Model transformation		
 		var List<HashMap<Object,Object>> ret = new ArrayList<HashMap<Object,Object>>();
 		
 		for (Declaration declaration : featureDiagram.declarations) {
-			if (declaration instanceof Feature) {
+			if (declaration instanceof Feature) {				
 				ret.add(map(declaration));
 			}
 		}
@@ -37,7 +54,7 @@ class FeatureDiagramToJSON {
 		return gson.toJson(map(feature));
 	}
 
-	static def ArrayList<HashMap<Object,Object>> list(EList<FeatureDefinition> definitions){
+	private static def ArrayList<HashMap<Object,Object>> list(EList<FeatureDefinition> definitions){
   		val res = new ArrayList<HashMap<Object,Object>>();
   		
   		definitions.forEach[definition |
@@ -55,7 +72,7 @@ class FeatureDiagramToJSON {
     		return res;
   	}
   	
-	static def HashMap<Object,Object> map(Feature feature) {
+	private static def HashMap<Object,Object> map(Feature feature) {
 		val res = Maps::<Object,Object>newHashMap;
 		
 		res.put("name", feature.name);

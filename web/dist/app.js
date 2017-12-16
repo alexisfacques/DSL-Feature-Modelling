@@ -27,7 +27,7 @@ var App = /** @class */ (function () {
     App.prototype._loadFeatureModel = function (inputFile) {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            var toCNF = cp.spawn('java', ['-jar', './bin/toCNF.jar', inputFile, './data/output.cnf']);
+            var toCNF = cp.spawn('java', ['-jar', './bin/transform.jar', 'cnf', inputFile, './data/output.cnf']);
             var buffer;
             toCNF.stdout.on('data', function (data) {
                 if (buffer)

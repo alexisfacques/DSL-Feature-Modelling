@@ -34,7 +34,7 @@ class App {
 
     private _loadFeatureModel( inputFile: string ): Promise<void> {
         return new Promise( (resolve, reject) => {
-            let toCNF: cp.ChildProcess = cp.spawn( 'java', ['-jar', './bin/toCNF.jar', inputFile, './data/output.cnf'] );
+            let toCNF: cp.ChildProcess = cp.spawn( 'java', ['-jar', './bin/transform.jar', 'cnf', inputFile, './data/output.cnf'] );
 
             let buffer: Buffer;
 

@@ -44,6 +44,7 @@ export class FeatureModelService {
         this.http.get('http://localhost:8080/api/locked')
             .map( (res: Response) => res.json() )
             .subscribe( (locked: Array<number>) => {
+                console.log(locked);
                 this.lockedFeatures = locked;
             });
     }

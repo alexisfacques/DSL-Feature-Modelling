@@ -1,0 +1,19 @@
+feature CarEquipment as 10 {
+	mandatory feature Healthing as 11 {
+		one of {
+			feature AirConditioningFrontAndRear as 12 ,
+			feature AirConditioning
+		as 13 }
+	},
+	mandatory feature Comfort as 14 {
+		optional feature AutomaticHeadLights as 15 ,
+		mandatory feature LEDHeadLights
+	as 16 },
+	mandatory feature DrivingAndSafety as 17 {
+		optional feature FrontFogLights
+	as 18 }
+}
+
+constraint 'AutomaticHeadLights requires FrontFogLights'
+	when CarEquipment.Comfort.AutomaticHeadLights
+	then CarEquipment.DrivingAndSafety.FrontFogLights
