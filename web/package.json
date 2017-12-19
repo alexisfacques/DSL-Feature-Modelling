@@ -1,7 +1,7 @@
 {
-  "name": "pi-microphone-web-server",
+  "name": "feature-model-configurator",
   "version": "1.0.0",
-  "description": "Web server for Pi Microphone Application",
+  "description": "A web based configurator for feature models",
   "main": "src/app.js",
   "scripts": {
     "start": "node dist/app.js",
@@ -20,6 +20,6 @@
   "devDependencies": {
     "@types/body-parser": "^1.16.5",
     "@types/express": "^4.0.37",
-    "typescript": "^2.5.3"
+    "typescript": "^2.6.2"
   }
 }

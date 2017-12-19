@@ -1,27 +1,33 @@
 FROM node:alpine
 
-# Create app directory
+# Installing Java 8
+RUN apk --update add openjdk8-jre
+
+# App directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Installing app dependencies
 COPY package.json .
 COPY package-lock.json .
 COPY tsconfig.json .
 
-RUN npm install
-
-# Bundle app sources
+# Copying app sources
 COPY ./src ./src
-COPY ./app ./app
+COPY ./data ./data
+COPY ./bin ./bin
+COPY ./angular-src ./angular-src
 
-# Building the app
-RUN npm run build
+# Building angular application
+WORKDIR angular-src
+RUN npm install \
+    && node_modules/@angular/cli/bin/ng build
 
-# AMQP port. Not sure if needed
-EXPOSE 5672
+# Building application
+WORKDIR /usr/src/app
+RUN npm install \
+    && npm run build
 
 # HTTP Server
 EXPOSE 8080
-
 
 CMD npm start

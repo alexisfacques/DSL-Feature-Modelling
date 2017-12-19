@@ -111,4 +111,4 @@ class App {
     }
 }
 
-new App();
+new App('0.0.0.0',8080);
