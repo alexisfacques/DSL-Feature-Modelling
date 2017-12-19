@@ -14,7 +14,7 @@ import com.alexisfacques.xtext.featureDiagram.Feature
 import com.alexisfacques.xtext.featureDiagram.FeatureGroup
 import com.alexisfacques.xtext.featureDiagram.ExtendedFeature
 
-class FeatureDiagramUtils {
+class FeatureDiagramUtils {	
 	/*
 	 * Populate features with custom mapped ID, for CNF model transformation. 
 	 */
@@ -30,6 +30,7 @@ class FeatureDiagramUtils {
 	
 	static def void populateIds(Feature feature) {
 		feature.id = i++;		
+		
 		feature.children.forEach[definition | {
 			// If the current child is a group of features ( OR / XOR )...
 			if(definition instanceof FeatureGroup) {
@@ -47,10 +48,10 @@ class FeatureDiagramUtils {
 	/*
 	 * Loads the FeatureDiagramModel.
 	 */
-	static def loadFeatureDiagram(URI uri) {
+	static def loadFeatureDiagram(String uri) {
 		try{
 			new FeatureDiagramStandaloneSetupGenerated().createInjectorAndDoEMFRegistration()
-			var res = new ResourceSetImpl().getResource(uri, true);
+			var res = new ResourceSetImpl().getResource(URI.createURI(uri), true);
 			res.contents.get(0) as FeatureDiagramModel;	
 		} catch(Exception e) {
 			System.out.println("Input file not found");
@@ -60,13 +61,14 @@ class FeatureDiagramUtils {
 	/*
 	 * Saves the FeatureDiagramModel.
 	 */
-	static def saveFeatureDiagram(URI uri, FeatureDiagramModel featureDiagramModel) {		
+	static def saveFeatureDiagram(String uri, FeatureDiagramModel featureDiagramModel) {		
 		try{
-			var Resource rs = new ResourceSetImpl().createResource(uri);
+			var Resource rs = new ResourceSetImpl().createResource(URI.createURI(uri));
 			rs.getContents.add(featureDiagramModel);
 			rs.save(new HashMap());
 		} catch(Exception e) {
-			System.out.println("Error while saving to" + uri.toString());
+			e.printStackTrace();
+			System.out.println("Error while saving to " + uri.toString());
 		}
 		
 	}
@@ -80,7 +82,8 @@ class FeatureDiagramUtils {
 		    writer.write(content);
 		    writer.close();	
 		} catch(Exception e) {
-			System.out.println("Error while saving to" + fileName);
+			e.printStackTrace();
+			System.out.println("Error while saving to " + fileName);
 		}
 	} 
 }

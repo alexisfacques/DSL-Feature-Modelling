@@ -1,7 +1,5 @@
 package com.alexisfacques.xtext
 
-import org.eclipse.emf.common.util.URI
-
 import com.alexisfacques.xtext.featureDiagram.Constraint
 import com.alexisfacques.xtext.featureDiagram.Declaration
 import com.alexisfacques.xtext.featureDiagram.ExtendedFeature
@@ -16,7 +14,7 @@ import java.util.ArrayList
 class FeatureDiagramToCNF extends FeatureDiagramUtils {	
 	static def void transform(String input, String output) {
 		// Loading the feature diagram model.
-		var FeatureDiagramModel featureDiagram = loadFeatureDiagram(URI.createURI(input))		
+		var FeatureDiagramModel featureDiagram = loadFeatureDiagram(input)		
 
 		// Populating features with an id.
 		populateIds(featureDiagram);
@@ -29,7 +27,7 @@ class FeatureDiagramToCNF extends FeatureDiagramUtils {
 		System.out.println(json);
 		
 		// Serializing
-		saveFeatureDiagram(URI.createURI("serialized.diagram"), featureDiagram);
+		saveFeatureDiagram("serialized.diagram", featureDiagram);
 		writeToFile(output,cnfClauses);
 	}	
 

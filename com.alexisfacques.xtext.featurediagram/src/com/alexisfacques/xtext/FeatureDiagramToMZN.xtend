@@ -11,12 +11,10 @@ import com.alexisfacques.xtext.featureDiagram.ExtendedFeature
 import java.util.List
 import java.util.ArrayList
 
-import org.eclipse.emf.common.util.URI
-
 class FeatureDiagramToMZN extends FeatureDiagramUtils {
 	static def void transform(String input, String output) {
 		// Loading the feature diagram model.
-		var FeatureDiagramModel featureDiagram = loadFeatureDiagram(URI.createURI(input));	
+		var FeatureDiagramModel featureDiagram = loadFeatureDiagram(input);	
 
 		var String mzn = toMZN(featureDiagram);
 		writeToFile(output,mzn);
@@ -100,7 +98,7 @@ class FeatureDiagramToMZN extends FeatureDiagramUtils {
 					ret.add(_getImplicationClause(feature.name,String.join(" xor ", children)));
 				}
 				else {
-					ret.add(_getImplicationClause(feature.name,String.join(" \b/ ", children)))
+					ret.add(_getImplicationClause(feature.name,String.join(" \\/ ", children)))
 				}
 			}
 		}

@@ -8,7 +8,6 @@ import com.alexisfacques.xtext.featureDiagram.FeatureDiagramModel
 import com.alexisfacques.xtext.featureDiagram.Declaration
 
 import org.eclipse.emf.common.util.EList
-import org.eclipse.emf.common.util.URI
 
 import java.util.HashMap
 import java.util.ArrayList
@@ -21,7 +20,7 @@ import com.google.gson.GsonBuilder;
 class FeatureDiagramToJSON extends FeatureDiagramUtils {
 	static def void transform(String input, String output) {
 		// Loading the feature diagram model.
-		var FeatureDiagramModel featureDiagram = loadFeatureDiagram(URI.createURI(input))		
+		var FeatureDiagramModel featureDiagram = loadFeatureDiagram(input)		
 
 		// Populating features with an id.
 		populateIds(featureDiagram);
@@ -30,7 +29,7 @@ class FeatureDiagramToJSON extends FeatureDiagramUtils {
 		var String json = toJSON(featureDiagram);
 		
 		// Serializing
-		saveFeatureDiagram(URI.createURI("serialized.diagram"), featureDiagram);
+		saveFeatureDiagram("serialized.diagram", featureDiagram);
 		writeToFile(output,json);
 	}	
 

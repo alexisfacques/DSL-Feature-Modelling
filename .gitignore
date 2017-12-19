@@ -7,3 +7,6 @@
 .sass-cache
 .git
 .metadata
+
+node_modules/
+dist/

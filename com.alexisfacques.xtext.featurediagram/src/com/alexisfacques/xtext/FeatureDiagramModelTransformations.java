@@ -12,7 +12,10 @@ public class FeatureDiagramModelTransformations {
 	 	   			break;
 	 	   		case "mzn":
 		   			FeatureDiagramToMZN.transform(args[1],args[2]);
-;					break;
+					break;
+	 	   		case "generate":
+	 	   			FeatureDiagramGeneration.generate(Integer.parseInt(args[1]), Integer.parseInt(args[2]), args[3]);
+	 	   			break;
 	 	   		default:
 	 	   			System.err.println("Command not supported");
 	 	   			break;
